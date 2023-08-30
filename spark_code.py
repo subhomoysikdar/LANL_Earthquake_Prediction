@@ -187,7 +187,7 @@ schema = StructType([
     StructField('time_to_failure', DoubleType(), True)
 ])
 
-df = spark.read.csv('s3://subhoms-test/input/data/LANL/LANL_Earthquake_Prediction/train_1000.csv', header=True,
+df = spark.read.csv('s3://subhoms-test/input/data/LANL/LANL_Earthquake_Prediction/train.csv', header=True,
                     schema=schema)
 df.show(10)
 
