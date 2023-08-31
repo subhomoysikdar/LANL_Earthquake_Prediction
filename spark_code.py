@@ -198,7 +198,6 @@ df = df.repartition(6).cache()
 print(df.rdd.getNumPartitions())
 
 df_features = df.groupby('idx').agg(F.collect_list('acoustic_data').alias("ad"), F.last('time_to_failure').alias("ttf"))
-df_features.show(10, truncate=False)
 
 df_features = generate_features(df_features)
 
@@ -206,7 +205,10 @@ end = time()
 print('Feature generation takes {} seconds'.format(round(end - start, 2)))
 
 df_features = df_features.drop('idx').drop('ad')
-#df_features.write.option("header", True).csv("s3://subhoms-test/input/data/LANL/LANL_Earthquake_Prediction/sparkfeatures")
+df_features.show(10, truncate=False)
+#df_features.write.option("header", True).csv("s3://subhoms-test/input/data/LANL/LANL_Earthquake_Prediction/sparkfeatures/features1/")
+
+#print('Wrote file to S3')
 
 label = 'ttf'
 features = [ x for x in df_features.columns if x != label ]
@@ -215,7 +217,7 @@ features = [ x for x in df_features.columns if x != label ]
 params = {
     "tree_method": "gpu_hist",
     "grow_policy": "depthwise",
-    "num_workers": 2,
+    "num_workers": 1,
     "use_gpu": "true",
 }
 params['features_col'] = features
